@@ -22,11 +22,25 @@ function updateTotalField(totalFieldId,amountValue){
 
 }
 
-function updateBalance(amount , isAdd){
 
+// not more than current balance you can withdraw 
+
+function getCurrentBalance(){
     const balanceTotal = document.getElementById('balance-total');
     const balanceTotalInnerText = balanceTotal.innerText;
     const balanceTotalInnerTextParse = parseFloat(balanceTotalInnerText);
+    return balanceTotalInnerTextParse;
+}
+
+
+
+function updateBalance(amount , isAdd){
+
+    const balanceTotal = document.getElementById('balance-total');
+    // const balanceTotalInnerText = balanceTotal.innerText;
+    // const balanceTotalInnerTextParse = parseFloat(balanceTotalInnerText);
+
+    const balanceTotalInnerTextParse = getCurrentBalance();
     
     if(isAdd == true){
         balanceTotal.innerText = balanceTotalInnerTextParse + amount ;
@@ -36,7 +50,6 @@ function updateBalance(amount , isAdd){
     }
 
 }
-
 
 
 
@@ -67,8 +80,10 @@ document.getElementById('deposit-button').addEventListener('click',function(){
 
 
     const depositInputFieldValueParse = getInputValue('deposit-input');
-    updateTotalField('deposit-total',depositInputFieldValueParse);
-    updateBalance(depositInputFieldValueParse, true);
+    if(depositInputFieldValueParse > 0){
+        updateTotalField('deposit-total',depositInputFieldValueParse);
+        updateBalance(depositInputFieldValueParse, true);
+    }
     
 
 });
@@ -105,8 +120,15 @@ document.getElementById('withdraw-button').addEventListener('click',function(){
 
 
     const withdrawInputFieldValueParse = getInputValue('withdraw-input')
-    updateTotalField ('withdraw-total', withdrawInputFieldValueParse);
-    updateBalance(withdrawInputFieldValueParse, false);
+    const withdrawOnlyCurrentBalance = getCurrentBalance();
+    if(withdrawInputFieldValueParse > 0 && withdrawInputFieldValueParse < withdrawOnlyCurrentBalance){
+        updateTotalField ('withdraw-total', withdrawInputFieldValueParse);
+        updateBalance(withdrawInputFieldValueParse, false);
+    }
+    else if ( withdrawInputFieldValueParse > withdrawOnlyCurrentBalance ){
+        alert('You cannot withdraw more than you have in your account Balance');
+    }
+    
 
 });
 
